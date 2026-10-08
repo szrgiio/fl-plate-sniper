@@ -83,7 +83,9 @@ try {
   assert.equal(r.code, 0);
   let s = state("hot");
   assert.equal(s.plates.CAVE.s, "A"); assert.equal(s.plates.HY.s, "N"); assert.equal(s.plates.A.s, "N");
-  assert.equal(s.counts.total, 1163); assert.equal(s.counts.available, 3);
+  const { buildTiers } = await import(join(dirname(RUN), "lists.mjs"));
+  const words = join(dirname(RUN), existsSync(join(dirname(RUN), "words.txt")) ? "words.txt" : "../lists/words.txt");
+  assert.equal(s.counts.total, buildTiers(words).hot.length); assert.equal(s.counts.available, 3);
   assert.equal(rejected, 0, "server rejected postbacks — token refresh broken");
   assert.equal(pushes.length, 1); assert.match(pushes[0].title, /live/);
   console.log("  push:", pushes[0].title, "|", pushes[0].message.split("\n")[0]);
@@ -118,13 +120,13 @@ try {
   r = await run("--tier", "hot"); assert.equal(pushes.length, 1, "warning should be throttled");
   broken = false;
 
-  step("6. 3-letter sweep (17,502 plates)");
+  step("6. 3-letter sweep (still supported in code)");
   pushes.length = 0;
   const t0 = Date.now();
   r = await run("--tier", "sweep");
   assert.equal(r.code, 0);
   s = state("sweep");
-  assert.equal(s.counts.total, 17502); assert.equal(s.plates.ZQX.s, "A"); assert.equal(s.plates.QQQ.s, "A");
+  assert.equal(s.counts.total, buildTiers(words).sweep.length); assert.equal(s.plates.ZQX.s, "A"); assert.equal(s.plates.QQQ.s, "A");
   console.log(`  ${s.counts.total} checked in ${((Date.now() - t0) / 1000).toFixed(1)}s locally, ${s.counts.available} available, baseline push: ${pushes[0]?.title}`);
 
   step("7. sweep picks up a newly opened 3-letter");

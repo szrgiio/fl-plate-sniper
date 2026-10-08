@@ -2,24 +2,18 @@ name: plate-sniper
 
 on:
   schedule:
-    - cron: "*/15 * * * *"    # hot tier: 1-letter, 2-letter, words.txt
-    - cron: "23 9,21 * * *"   # sweep: all 3-letter (≈5:23am / 5:23pm Eastern)
+    - cron: "*/15 * * * *"    # 1-letter, 2-letter, words.txt
   workflow_dispatch:
     inputs:
-      tier:
-        description: "Which list to run"
-        type: choice
-        options: [hot, sweep]
-        default: hot
       plates:
-        description: "Or check specific plates now (comma-separated, e.g. CAVE,TOWER,HY)"
+        description: "Check specific plates now (comma-separated, e.g. CAVE,TOWER). Leave blank to run the full watchlist."
         required: false
 
 permissions:
   contents: write
 
 concurrency:
-  group: plate-${{ inputs.plates && 'adhoc' || (github.event.schedule == '23 9,21 * * *' && 'sweep' || (inputs.tier || 'hot')) }}
+  group: plate-${{ inputs.plates && 'adhoc' || 'hot' }}
   cancel-in-progress: false
 
 jobs:
@@ -39,15 +33,12 @@ jobs:
           NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
           EVENT: ${{ github.event_name }}
           SCHEDULE: ${{ github.event.schedule }}
-          IN_TIER: ${{ inputs.tier }}
           IN_PLATES: ${{ inputs.plates }}
         run: |
           if [ -n "$IN_PLATES" ]; then
             node run.mjs --plates "$IN_PLATES"
-          elif [ "$EVENT" = "schedule" ] && [ "$SCHEDULE" = "23 9,21 * * *" ]; then
-            node run.mjs --tier sweep
           else
-            node run.mjs --tier "${IN_TIER:-hot}"
+            node run.mjs --tier hot
           fi
 
       - name: Save results

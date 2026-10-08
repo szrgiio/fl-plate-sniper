@@ -4,11 +4,10 @@ Free, self-hosted version of PlateRadar for Florida. Runs on GitHub Actions, che
 
 | What | Plates | How often |
 |---|---|---|
-| Rare + words | all 1-letter (26), all 2-letter (676), everything in `words.txt` (~460) | every 15 min |
-| 3-letter sweep | all 17,576 3-letter combos | twice a day (~5:23 AM / PM ET) |
+| Rare + words | all 1-letter (26), all 2-letter (676), ~1,180 OG words in `words.txt` | every 15 min |
 | Ad-hoc | anything you type in | on demand |
 
-Alerts (ntfy push): urgent for 1–2 letter openings, high for words, normal for 3-letter. You also get a heads-up if the state site goes down or changes its form.
+Alerts (ntfy push): urgent for 1–2 letter openings, high for words. You also get a heads-up if the state site goes down or changes its form.
 
 Dashboard (GitHub Pages): what's open now, a 26×26 two-letter board, recent changes, and search.
 
@@ -48,8 +47,7 @@ Your dashboard: `https://<you>.github.io/fl-plate-sniper/`
 
 ### 5. First run
 Repo → **Actions** → enable workflows if prompted → **plate-sniper** → **Run workflow**:
-1. Run with tier `hot` (~2 min). You should get a "Plate sniper is live" push listing what's open right now.
-2. Run again with tier `sweep` (~25 min) to fill in all 3-letter combos.
+Leave the plates box empty and run it (~2 min). You should get a "Plate sniper is live" push listing what's open right now.
 
 After that it runs itself.
 
@@ -65,9 +63,9 @@ After that it runs itself.
 Florida personalized plates are claimed in person at a county tax collector office. Rare plates go fast: in the blog you sent, a 2-letter plate got claimed at 8 AM opening the day after it showed up. Go at opening, bring your registration, and check availability on your phone in line. Call your office first to ask whether they'll take the order over the phone or online.
 
 ## Tuning
-- `config.json`: `concurrency` (parallel sessions, default 3) and `delayMs` (pause per request, default 400). These are deliberately gentle so the state server isn't hammered; a full hot run is ~230 requests over ~2 min.
+- `config.json`: `concurrency` (parallel sessions, default 3) and `delayMs` (pause per request, default 400). These are deliberately gentle so the state server isn't hammered; a full run is ~380 requests over ~2 min.
 - Schedule: `.github/workflows/sniper.yml`. GitHub's cron can run 5–20 min late at busy times; that's the main speed limit of the free setup.
-- If you'd rather keep the repo private: free private repos get 2,000 Actions minutes/month, so change the hot schedule to `"0 * * * *"` (hourly) and the sweep to once a day.
+- If you'd rather keep the repo private: free private repos get 2,000 Actions minutes/month, so change the hot schedule to `"0 * * * *"` (hourly).
 - GitHub pauses scheduled workflows in a public repo after 60 days with no activity. The result commits should keep it active; if it ever pauses, GitHub emails you and one click re-enables it.
 
 ## How it works

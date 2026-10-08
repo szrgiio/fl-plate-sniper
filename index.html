@@ -149,7 +149,7 @@ function render(files) {
   ALL = [...map.values()];
 
   const runs = [];
-  for (const [t, name, staleMin] of [["hot", "Rare + words", 60], ["sweep", "3-letter sweep", 15 * 60]]) {
+  for (const [t, name, staleMin] of [["hot", "Last check", 60]]) {
     const f = files[t]; const stale = !f || (Date.now() - Date.parse(f.checkedAt)) / 60000 > staleMin;
     runs.push(`<span><span class="dot ${stale ? "stale" : ""}"></span>${name}: ${f ? ago(f.checkedAt) : "not run yet"}</span>`);
   }
@@ -161,7 +161,7 @@ function render(files) {
   const by = (c) => ALL.filter((x) => x.cat === c);
   const tile = (k, list, hot) => { const a = list.filter((x) => x.s === "A").length;
     return `<div class="tile ${hot && a ? "hot" : ""}"><div class="k">${k}</div><div class="v">${a}<small> / ${list.length.toLocaleString()} open</small></div></div>`; };
-  $("tiles").innerHTML = tile("1-letter", by("1-letter"), 1) + tile("2-letter", by("2-letter"), 1) + tile("3-letter", by("3-letter")) + tile("Words", by("word").concat(by("digits")));
+  $("tiles").innerHTML = tile("1-letter", by("1-letter"), 1) + tile("2-letter", by("2-letter"), 1) + tile("3-letter words", by("3-letter")) + tile("4+ letter words", by("word").concat(by("digits")));
 
   const groups = [["1-letter", "Single letter"], ["2-letter", "Two letter"], ["word", "Words"], ["digits", "Numbers"], ["3-letter", "Three letter"]];
   let html = "";
