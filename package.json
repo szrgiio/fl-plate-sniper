@@ -1,0 +1,14 @@
+{
+  "name": "fl-plate-sniper",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Watches Florida personalized plate availability and pings your phone when rare plates free up.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "hot": "node src/run.mjs --tier hot",
+    "sweep": "node src/run.mjs --tier sweep",
+    "check": "node src/run.mjs --plates",
+    "test": "node test/e2e.mjs"
+  }
+}

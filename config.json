@@ -1,0 +1,5 @@
+{
+  "concurrency": 3,
+  "delayMs": 400,
+  "maxAttempts": 3
+}
