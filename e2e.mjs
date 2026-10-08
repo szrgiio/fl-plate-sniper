@@ -7,7 +7,9 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+import { existsSync } from "node:fs";
+const HERE = dirname(fileURLToPath(import.meta.url));
+const RUN = existsSync(join(HERE, "run.mjs")) ? join(HERE, "run.mjs") : join(HERE, "..", "src", "run.mjs");
 const avail = new Set(["CAVE", "TOWER", "ZQX", "QQQ", "PAINT"]);
 let broken = false, requests = 0, rejected = 0;
 const sessions = new Map(); // session id -> current EVENTVALIDATION token
@@ -67,7 +69,7 @@ const env = { ...process.env, FL_URL: `http://127.0.0.1:${fl.address().port}/mvc
 // The runner is async; run it as a child process while this process keeps serving.
 const { spawn } = await import("node:child_process");
 const run = (...args) => new Promise((resolve) => {
-  const p = spawn(process.execPath, [join(ROOT, "src/run.mjs"), ...args], { env });
+  const p = spawn(process.execPath, [RUN, ...args], { env });
   let out = ""; p.stdout.on("data", (d) => (out += d)); p.stderr.on("data", (d) => (out += d));
   p.on("close", (code) => resolve({ code, out }));
 });

@@ -4,7 +4,7 @@ Free, self-hosted version of PlateRadar for Florida. Runs on GitHub Actions, che
 
 | What | Plates | How often |
 |---|---|---|
-| Rare + words | all 1-letter (26), all 2-letter (676), everything in `lists/words.txt` (~460) | every 15 min |
+| Rare + words | all 1-letter (26), all 2-letter (676), everything in `words.txt` (~460) | every 15 min |
 | 3-letter sweep | all 17,576 3-letter combos | twice a day (~5:23 AM / PM ET) |
 | Ad-hoc | anything you type in | on demand |
 
@@ -43,7 +43,7 @@ Repo → **Settings → Secrets and variables → Actions → New repository sec
 - Name: `NTFY_TOPIC`  Value: `sgee-plates-b5dd155aff`
 
 ### 4. Dashboard
-Repo → **Settings → Pages** → Source: *Deploy from a branch* → Branch `main`, folder `/docs` → Save.
+Repo → **Settings → Pages** → Source: *Deploy from a branch* → Branch `main`, folder `/ (root)` → Save.
 Your dashboard: `https://<you>.github.io/fl-plate-sniper/`
 
 ### 5. First run
@@ -57,9 +57,9 @@ After that it runs itself.
 
 ## Day to day
 
-- **Add/remove watched words:** edit `lists/words.txt` on github.com and commit. Max 7 characters. New words that are already open get pushed on the next run.
+- **Add/remove watched words:** edit `words.txt` on github.com and commit. Max 7 characters. New words that are already open get pushed on the next run.
 - **Check something right now:** Actions → plate-sniper → Run workflow → put plates in the box (`CAVE,TOWER,HY`). Results show in the run log and on the dashboard. The dashboard's "Check specific plates" button links there.
-- **Locally:** `node src/run.mjs --plates "CAVE,TOWER"` (Node 20+, no installs).
+- **Locally:** `node run.mjs --plates "CAVE,TOWER"` (Node 20+, no installs).
 
 ## When you get the push
 Florida personalized plates are claimed in person at a county tax collector office. Rare plates go fast: in the blog you sent, a 2-letter plate got claimed at 8 AM opening the day after it showed up. Go at opening, bring your registration, and check availability on your phone in line. Call your office first to ask whether they'll take the order over the phone or online.
@@ -71,4 +71,4 @@ Florida personalized plates are claimed in person at a county tax collector offi
 - GitHub pauses scheduled workflows in a public repo after 60 days with no activity. The result commits should keep it active; if it ever pauses, GitHub emails you and one click re-enables it.
 
 ## How it works
-`src/flhsmv.mjs` loads the ASP.NET form (session cookie + `__VIEWSTATE`/`__EVENTVALIDATION`), posts 5 plates per request, reads each `AVAILABLE` / `NOT AVAILABLE` label, and refreshes the form tokens from each response. `src/run.mjs` compares against the last run (`docs/data-*.json`), records changes, sends alerts, and stops early if the site starts failing. `npm test` runs the whole thing against a local mock of the site.
+`flhsmv.mjs` loads the ASP.NET form (session cookie + `__VIEWSTATE`/`__EVENTVALIDATION`), posts 5 plates per request, reads each `AVAILABLE` / `NOT AVAILABLE` label, and refreshes the form tokens from each response. `run.mjs` compares against the last run (`data-*.json`), records changes, sends alerts, and stops early if the site starts failing. `npm test` runs the whole thing against a local mock of the site.

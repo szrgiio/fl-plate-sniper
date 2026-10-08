@@ -10,13 +10,16 @@ import { FlPlateClient, DEFAULT_URL } from "./flhsmv.mjs";
 import { buildTiers, normalizePlate, category } from "./lists.mjs";
 import { notify } from "./notify.mjs";
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+// Works with both layouts: folders (src/, lists/, docs/) or everything flat in the repo root.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const FLAT = existsSync(join(HERE, "config.json"));
+const ROOT = FLAT ? HERE : join(HERE, "..");
 const cfg = JSON.parse(readFileSync(join(ROOT, "config.json"), "utf8"));
 const CONCURRENCY = +(process.env.CONCURRENCY || cfg.concurrency);
 const DELAY_MS = +(process.env.DELAY_MS ?? cfg.delayMs);
 const MAX_ATTEMPTS = cfg.maxAttempts;
 const URL_ = process.env.FL_URL || DEFAULT_URL;
-const DATA_DIR = process.env.DATA_DIR || join(ROOT, "docs");
+const DATA_DIR = process.env.DATA_DIR || (FLAT ? ROOT : join(ROOT, "docs"));
 const MAX_EVENTS = 500;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -109,7 +112,7 @@ async function main() {
     for (const x of raw) if (!normalizePlate(x)) console.warn(`  skipping "${x}" (FL allows max 7 letters/digits plus one space or hyphen)`);
     plates = [...new Set(raw.map(normalizePlate).filter(Boolean))];
   } else {
-    const tiers = buildTiers(join(ROOT, "lists", "words.txt"));
+    const tiers = buildTiers(FLAT ? join(ROOT, "words.txt") : join(ROOT, "lists", "words.txt"));
     if (!tiers[tierName]) throw new Error(`unknown tier "${tierName}" (use hot or sweep)`);
     plates = tiers[tierName];
   }
