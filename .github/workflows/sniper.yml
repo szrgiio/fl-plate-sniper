@@ -1,0 +1,65 @@
+name: plate-sniper
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"    # hot tier: 1-letter, 2-letter, words.txt
+    - cron: "23 9,21 * * *"   # sweep: all 3-letter (≈5:23am / 5:23pm Eastern)
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: "Which list to run"
+        type: choice
+        options: [hot, sweep]
+        default: hot
+      plates:
+        description: "Or check specific plates now (comma-separated, e.g. CAVE,TOWER,HY)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plate-${{ inputs.plates && 'adhoc' || (github.event.schedule == '23 9,21 * * *' && 'sweep' || (inputs.tier || 'hot')) }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run checker
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          IN_TIER: ${{ inputs.tier }}
+          IN_PLATES: ${{ inputs.plates }}
+        run: |
+          if [ -n "$IN_PLATES" ]; then
+            node src/run.mjs --plates "$IN_PLATES"
+          elif [ "$EVENT" = "schedule" ] && [ "$SCHEDULE" = "23 9,21 * * *" ]; then
+            node src/run.mjs --tier sweep
+          else
+            node src/run.mjs --tier "${IN_TIER:-hot}"
+          fi
+
+      - name: Save results
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data-*.json
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "results: $(date -u +%Y-%m-%dT%H:%MZ)" -q
+          for i in 1 2 3 4 5; do
+            git pull --rebase -q && git push -q && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries"; exit 1
