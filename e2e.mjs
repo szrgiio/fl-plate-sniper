@@ -130,9 +130,9 @@ try {
   console.log(`  ${s.counts.total} checked in ${((Date.now() - t0) / 1000).toFixed(1)}s locally, ${s.counts.available} available, baseline push: ${pushes[0]?.title}`);
 
   step("7. sweep picks up a newly opened 3-letter");
-  avail.add("ABC"); pushes.length = 0;
+  avail.add("QZX"); pushes.length = 0;
   r = await run("--tier", "sweep");
-  assert.ok(pushes.some((p) => p.message.includes("ABC")));
+  assert.ok(pushes.some((p) => p.message.includes("QZX")));
   console.log("  push:", pushes.map((p) => p.title).join(" | "));
 
   console.log(`\n✅ All checks passed (${requests} mock requests, ${rejected} rejected postbacks). Data in ${dataDir}`);
