@@ -118,14 +118,16 @@ export class FlPlateClient {
     });
     this.absorbCookies(res);
     const html = await res.text();
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    this.lastStatus = res.status;
+    this.lastTitle = ((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || html.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim().slice(0, 120);
+    if (!res.ok) throw new Error(`HTTP ${res.status} (page: "${this.lastTitle}")`);
     return html;
   }
 
   async init() {
     const html = await this.request("GET");
     this.form = parseForm(html);
-    if (!this.form.hasState) throw new Error("Form page missing __VIEWSTATE/__EVENTVALIDATION (site changed or blocked)");
+    if (!this.form.hasState) throw new Error(`Form page missing __VIEWSTATE/__EVENTVALIDATION (HTTP ${this.lastStatus}, page: "${this.lastTitle}")`);
   }
 
   /** Check 1–5 plates. Returns [{plate, status:'A'|'N'|'X', text}] */
@@ -146,7 +148,7 @@ export class FlPlateClient {
     const missing = plates.some((_, i) => texts[i] === null);
     if (missing) {
       this.form = null; // force a fresh session next time
-      throw new Error("Result labels not found in response (site changed, error page, or throttled)");
+      throw new Error(`Result labels not found (HTTP ${this.lastStatus}, page: "${this.lastTitle}")`);
     }
     return plates.map((plate, i) => ({ plate, status: classify(texts[i]), text: texts[i] }));
   }

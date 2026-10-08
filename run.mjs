@@ -60,7 +60,7 @@ function chunk(arr, n) {
 async function checkAll(plates) {
   const batches = chunk(plates, 5);
   const results = new Map();
-  let next = 0, failed = 0, done = 0, streak = 0, aborted = false;
+  let next = 0, failed = 0, done = 0, streak = 0, aborted = false, firstError = null;
   const started = Date.now();
 
   async function worker(id) {
@@ -74,7 +74,10 @@ async function checkAll(plates) {
           ok = true;
         } catch (e) {
           client.form = null;
-          if (attempt === MAX_ATTEMPTS) console.error(`[w${id}] gave up on ${batch.join(",")}: ${e.message}`);
+          if (attempt === MAX_ATTEMPTS) {
+            console.error(`[w${id}] gave up on ${batch.join(",")}: ${e.message}`);
+            firstError ??= e.message;
+          }
           else await sleep(2000 * attempt * attempt);
         }
       }
@@ -95,7 +98,7 @@ async function checkAll(plates) {
   }
   await Promise.all(Array.from({ length: Math.min(CONCURRENCY, batches.length) }, (_, i) => worker(i + 1)));
   if (aborted) failed = batches.length - Math.round(results.size / 5);
-  return { results, failed, total: batches.length };
+  return { results, failed, total: batches.length, firstError };
 }
 
 function fmtList(ps, max = Infinity) {
@@ -125,7 +128,7 @@ async function main() {
 
   console.log(`Checking ${plates.length} plates (tier=${tierName}, ${Math.ceil(plates.length / 5)} requests, concurrency=${CONCURRENCY})`);
   const t0 = Date.now();
-  const { results, failed, total } = await checkAll(plates);
+  const { results, failed, total, firstError } = await checkAll(plates);
   const secs = ((Date.now() - t0) / 1000).toFixed(0);
   console.log(`Done in ${secs}s — ${results.size}/${plates.length} checked, ${failed}/${total} batches failed`);
 
@@ -161,7 +164,7 @@ async function main() {
   };
   const failRate = failed / total;
   if (baseline && failRate <= 0.5) st.baselineDone = true;
-  st.lastError = failRate > 0 ? `${failed}/${total} batches failed` : null;
+  st.lastError = failRate > 0 ? `${failed}/${total} batches failed: ${firstError || "unknown"}` : null;
 
   // ---------- alerts ----------
   if (adhoc) {
@@ -175,10 +178,16 @@ async function main() {
       st.brokenAlertAt = at;
       await notify({
         title: `Plate checker failing (${tierName})`,
-        message: `${failed}/${total} requests failed. The FL site may be down or changed its form. Check the Actions log.`,
+        message: `${failed}/${total} requests failed. Reason: ${firstError || "unknown"}. It keeps retrying every run; you'll only get this warning every 6 hours while it lasts.`,
         priority: 4, tags: ["warning"],
       });
     }
+  } else if (st.brokenAlertAt && failRate === 0) {
+    delete st.brokenAlertAt;
+    await notify({ title: "Plate checker back online", message: `All ${total} requests succeeded again. Watching as normal.`, priority: 2, tags: ["white_check_mark"] });
+  }
+  if (adhoc || failRate > 0.5) {
+    // handled above
   } else if (baseline) {
     const avail = plates.filter((p) => results.get(p)?.status === "A");
     const rare = avail.filter(isRare);
