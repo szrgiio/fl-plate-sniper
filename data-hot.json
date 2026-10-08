@@ -1,14 +1,13 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-08T16:49:14.189Z",
-  "durationSec": 35,
+  "checkedAt": "2026-10-08T16:59:41.990Z",
+  "durationSec": 123,
   "counts": {
     "total": 3530,
     "available": 77
   },
   "baselineDone": true,
-  "lastError": "706/706 batches failed",
-  "brokenAlertAt": "2026-10-08T16:49:14.189Z",
+  "lastError": null,
   "events": [
     {"p":"MAD","from":"A","to":"N","at":"2026-10-08T13:22:10.884Z"}
   ],
