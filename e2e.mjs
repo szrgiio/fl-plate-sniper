@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RUN = existsSync(join(HERE, "run.mjs")) ? join(HERE, "run.mjs") : join(HERE, "..", "src", "run.mjs");
-const avail = new Set(["CAVE", "TOWER", "ZQX", "QQQ", "PAINT"]);
+const avail = new Set(["CAVE", "TOWER", "ZQX", "QZQ", "PAINT"]);
 let broken = false, requests = 0, rejected = 0;
 const sessions = new Map(); // session id -> current EVENTVALIDATION token
 
@@ -126,7 +126,7 @@ try {
   r = await run("--tier", "sweep");
   assert.equal(r.code, 0);
   s = state("sweep");
-  assert.equal(s.counts.total, buildTiers(words).sweep.length); assert.equal(s.plates.ZQX.s, "A"); assert.equal(s.plates.QQQ.s, "A");
+  assert.equal(s.counts.total, buildTiers(words).sweep.length); assert.equal(s.plates.ZQX.s, "A"); assert.equal(s.plates.QZQ.s, "A");
   console.log(`  ${s.counts.total} checked in ${((Date.now() - t0) / 1000).toFixed(1)}s locally, ${s.counts.available} available, baseline push: ${pushes[0]?.title}`);
 
   step("7. sweep picks up a newly opened 3-letter");
