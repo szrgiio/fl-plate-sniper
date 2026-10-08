@@ -98,7 +98,7 @@ async function checkAll(plates) {
   return { results, failed, total: batches.length };
 }
 
-function fmtList(ps, max = 40) {
+function fmtList(ps, max = Infinity) {
   return ps.length > max ? `${ps.slice(0, max).join(", ")} … (+${ps.length - max} more)` : ps.join(", ");
 }
 
