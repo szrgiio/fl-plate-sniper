@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // Usage:
-//   node src/run.mjs --tier hot      # 1-letter, 2-letter, lists/words.txt  (every 15 min in Actions)
+//   node run.mjs --tier hot      # all 1-2 character plates + words.txt  (every 15 min in Actions)
 //   node src/run.mjs --tier sweep    # every 3-letter combo                 (twice daily)
 //   node src/run.mjs --plates "CAVE,TOWER,HY"   # ad-hoc check, prints results
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { FlPlateClient, DEFAULT_URL } from "./flhsmv.mjs";
-import { buildTiers, normalizePlate, category } from "./lists.mjs";
+import { buildTiers, normalizePlate, category, isRare } from "./lists.mjs";
 import { notify } from "./notify.mjs";
 
 // Works with both layouts: folders (src/, lists/, docs/) or everything flat in the repo root.
@@ -138,7 +138,7 @@ async function main() {
     st.plates[p] = entry;
     if (!old) {
       // A plate never seen before (e.g. you just added it to words.txt) that's open → alert.
-      if (r.status === "A" && !baseline && !adhoc && ["word", "digits"].includes(category(p))) newlyAvail.push(p);
+      if (r.status === "A" && !baseline && !adhoc && tierName === "hot") newlyAvail.push(p);
       continue;
     }
     if (old.s !== r.status) {
@@ -181,19 +181,19 @@ async function main() {
     }
   } else if (baseline) {
     const avail = plates.filter((p) => results.get(p)?.status === "A");
-    const rare = avail.filter((p) => ["1-letter", "2-letter"].includes(category(p)));
+    const rare = avail.filter(isRare);
     await notify({
       title: `Plate sniper is live (${tierName})`,
       message: `Baseline: ${avail.length} of ${results.size} available.` +
-        (rare.length ? `\n1-2 letter OPEN NOW: ${rare.join(", ")}` : "") +
+        (rare.length ? `\n1-2 character OPEN NOW: ${rare.join(", ")}` : "") +
         (avail.length ? `\nAvailable: ${fmtList(avail)}` : "") +
         `\nYou'll be pinged when anything else frees up.`,
       priority: rare.length ? 5 : 3, tags: ["satellite"],
     });
   } else {
-    const rare = newlyAvail.filter((p) => ["1-letter", "2-letter"].includes(category(p)));
-    const words = newlyAvail.filter((p) => category(p) === "word" || category(p) === "digits");
-    const three = newlyAvail.filter((p) => category(p) === "3-letter");
+    const rare = newlyAvail.filter(isRare);
+    const words = newlyAvail.filter((p) => !isRare(p) && tierName === "hot");
+    const three = newlyAvail.filter((p) => !isRare(p) && tierName !== "hot");
     for (const p of rare) {
       await notify({
         title: `🚨 ${p} is AVAILABLE in Florida`,
@@ -203,7 +203,7 @@ async function main() {
     }
     if (words.length) await notify({ title: `Word plate open: ${fmtList(words, 5)}`, message: `Newly available: ${fmtList(words)}`, priority: 4, tags: ["sparkles"] });
     if (three.length) await notify({ title: `${three.length} 3-letter plate(s) opened`, message: fmtList(three), priority: 3, tags: ["abc"] });
-    const goneRare = gone.filter((p) => category(p) !== "3-letter");
+    const goneRare = gone.filter((p) => tierName === "hot");
     if (goneRare.length) await notify({ title: `Taken: ${fmtList(goneRare, 5)}`, message: `No longer available: ${fmtList(goneRare)}`, priority: 2, tags: ["x"] });
   }
 

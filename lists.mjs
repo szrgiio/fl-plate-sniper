@@ -4,6 +4,11 @@ const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export const oneLetter = () => [...A];
 export const twoLetter = () => A.flatMap((a) => A.map((b) => a + b));
+const D = "0123456789".split("");
+export const oneDigit = () => [...D];
+export const twoDigit = () => D.flatMap((a) => D.map((b) => a + b));
+// Letter+number mixes: C1, F6, 5R, 9Y …
+export const twoMix = () => [...A.flatMap((a) => D.map((d) => a + d)), ...D.flatMap((d) => A.map((a) => d + a))];
 export const threeLetter = () => A.flatMap((a) => A.flatMap((b) => A.map((c) => a + b + c)));
 
 // Florida: up to 7 characters (letters, digits, one space or hyphen).
@@ -34,13 +39,17 @@ export function category(p) {
   if (/^[A-Z]{2}$/.test(p)) return "2-letter";
   if (/^[A-Z]{3}$/.test(p)) return "3-letter";
   if (/^\d{1,3}$/.test(p)) return "digits";
+  if (/^[A-Z0-9]{2}$/.test(p)) return "2-mix";
   return "word";
 }
+
+/** 1–2 characters = the rare tier (urgent alerts). */
+export const isRare = (p) => p.replace(/[ -]/g, "").length <= 2;
 
 /** hot = rare stuff checked every run; sweep = all 3-letter not already in hot. */
 export function buildTiers(wordsPath) {
   const words = readList(wordsPath);
-  const hot = [...new Set([...oneLetter(), ...twoLetter(), ...words])];
+  const hot = [...new Set([...oneLetter(), ...oneDigit(), ...twoLetter(), ...twoMix(), ...twoDigit(), ...words])];
   const hotSet = new Set(hot);
   const sweep = threeLetter().filter((p) => !hotSet.has(p));
   return { hot, sweep };
