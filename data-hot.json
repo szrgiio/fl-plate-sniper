@@ -1,14 +1,13 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-16T03:13:46.905Z",
-  "durationSec": 32,
+  "checkedAt": "2026-10-16T03:53:53.159Z",
+  "durationSec": 132,
   "counts": {
     "total": 3530,
     "available": 76
   },
   "baselineDone": true,
-  "lastError": "706/706 batches failed: HTTP 403 (page: \"Access Denied\")",
-  "brokenAlertAt": "2026-10-16T03:13:46.905Z",
+  "lastError": null,
   "events": [
     {"p":"SEXY","from":"A","to":"N","at":"2026-10-15T16:54:49.099Z"},
     {"p":"ALT","from":"A","to":"N","at":"2026-10-14T20:48:57.155Z"},
