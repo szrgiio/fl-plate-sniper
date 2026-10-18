@@ -1,13 +1,14 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-18T16:23:50.767Z",
-  "durationSec": 123,
+  "checkedAt": "2026-10-18T16:56:18.896Z",
+  "durationSec": 32,
   "counts": {
     "total": 3531,
     "available": 77
   },
   "baselineDone": true,
-  "lastError": null,
+  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
+  "brokenAlertAt": "2026-10-18T16:56:18.896Z",
   "events": [
     {"p":"PORK","from":"N","to":"A","at":"2026-10-18T04:13:55.636Z"},
     {"p":"CAN","from":"A","to":"N","at":"2026-10-16T19:15:37.008Z"},
