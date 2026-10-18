@@ -1,13 +1,14 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-18T11:08:04.744Z",
-  "durationSec": 126,
+  "checkedAt": "2026-10-18T11:40:31.185Z",
+  "durationSec": 33,
   "counts": {
     "total": 3531,
     "available": 77
   },
   "baselineDone": true,
-  "lastError": null,
+  "lastError": "707/707 batches failed: Form page missing __VIEWSTATE/__EVENTVALIDATION (HTTP 200, page: \"Official Website Florida Department of Highway Safety and Motor Vehicles\")",
+  "brokenAlertAt": "2026-10-18T11:40:31.185Z",
   "events": [
     {"p":"PORK","from":"N","to":"A","at":"2026-10-18T04:13:55.636Z"},
     {"p":"CAN","from":"A","to":"N","at":"2026-10-16T19:15:37.008Z"},
