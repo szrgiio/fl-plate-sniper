@@ -1,13 +1,14 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-21T20:49:16.498Z",
-  "durationSec": 142,
+  "checkedAt": "2026-10-21T21:25:46.015Z",
+  "durationSec": 32,
   "counts": {
     "total": 3531,
     "available": 78
   },
   "baselineDone": true,
-  "lastError": null,
+  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
+  "brokenAlertAt": "2026-10-21T21:25:46.015Z",
   "events": [
     {"p":"SENDING","from":"A","to":"N","at":"2026-10-19T13:28:18.155Z"},
     {"p":"DRINK","from":"N","to":"A","at":"2026-10-19T04:31:30.518Z"},
