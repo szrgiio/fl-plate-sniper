@@ -1,15 +1,15 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-21T21:25:46.015Z",
-  "durationSec": 32,
+  "checkedAt": "2026-10-21T22:03:19.082Z",
+  "durationSec": 126,
   "counts": {
     "total": 3531,
-    "available": 78
+    "available": 77
   },
   "baselineDone": true,
-  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
-  "brokenAlertAt": "2026-10-21T21:25:46.015Z",
+  "lastError": null,
   "events": [
+    {"p":"PRO","from":"A","to":"N","at":"2026-10-21T22:03:19.082Z"},
     {"p":"SENDING","from":"A","to":"N","at":"2026-10-19T13:28:18.155Z"},
     {"p":"DRINK","from":"N","to":"A","at":"2026-10-19T04:31:30.518Z"},
     {"p":"PRO","from":"N","to":"A","at":"2026-10-19T04:31:30.518Z"},
@@ -2440,7 +2440,7 @@
     "PRIOR": {"s":"A","c":"2026-10-08T03:49:14.445Z"},
     "PRISM": {"s":"N","c":"2026-10-08T03:29:58.062Z"},
     "PRIZE": {"s":"N","c":"2026-10-08T03:49:14.445Z"},
-    "PRO": {"s":"A","c":"2026-10-19T04:31:30.518Z"},
+    "PRO": {"s":"N","c":"2026-10-21T22:03:19.082Z"},
     "PROBE": {"s":"N","c":"2026-10-08T03:49:14.445Z"},
     "PROMO": {"s":"N","c":"2026-10-08T03:49:14.445Z"},
     "PRONE": {"s":"N","c":"2026-10-08T03:49:14.445Z"},
