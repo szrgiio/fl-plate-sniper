@@ -1,13 +1,14 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-10-31T13:31:46.253Z",
-  "durationSec": 128,
+  "checkedAt": "2026-10-31T14:14:22.327Z",
+  "durationSec": 32,
   "counts": {
     "total": 3531,
     "available": 76
   },
   "baselineDone": true,
-  "lastError": null,
+  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
+  "brokenAlertAt": "2026-10-31T14:14:22.327Z",
   "events": [
     {"p":"C2","from":"A","to":"N","at":"2026-10-26T14:09:45.230Z"},
     {"p":"C2","from":"N","to":"A","at":"2026-10-25T04:05:26.917Z"},
