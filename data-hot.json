@@ -1,14 +1,13 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-11-02T18:35:01.815Z",
-  "durationSec": 32,
+  "checkedAt": "2026-11-02T19:40:38.375Z",
+  "durationSec": 129,
   "counts": {
     "total": 3531,
     "available": 79
   },
   "baselineDone": true,
-  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
-  "brokenAlertAt": "2026-11-02T18:35:01.815Z",
+  "lastError": null,
   "events": [
     {"p":"Y8","from":"A","to":"N","at":"2026-11-02T14:42:54.320Z"},
     {"p":"VISIT","from":"N","to":"A","at":"2026-11-02T05:33:46.105Z"},
