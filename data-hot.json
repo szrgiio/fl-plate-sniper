@@ -1,13 +1,14 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-11-04T00:50:40.441Z",
-  "durationSec": 136,
+  "checkedAt": "2026-11-04T01:53:43.255Z",
+  "durationSec": 32,
   "counts": {
     "total": 3531,
     "available": 78
   },
   "baselineDone": true,
-  "lastError": null,
+  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
+  "brokenAlertAt": "2026-11-04T01:53:43.255Z",
   "events": [
     {"p":"HOTEL","from":"A","to":"N","at":"2026-11-03T22:17:06.388Z"},
     {"p":"Y8","from":"A","to":"N","at":"2026-11-02T14:42:54.320Z"},
