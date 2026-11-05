@@ -1,14 +1,13 @@
 {
   "tier": "hot",
-  "checkedAt": "2026-11-05T00:08:30.875Z",
-  "durationSec": 35,
+  "checkedAt": "2026-11-05T01:23:13.639Z",
+  "durationSec": 131,
   "counts": {
     "total": 3531,
     "available": 79
   },
   "baselineDone": true,
-  "lastError": "707/707 batches failed: HTTP 403 (page: \"Access Denied\")",
-  "brokenAlertAt": "2026-11-05T00:08:30.875Z",
+  "lastError": null,
   "events": [
     {"p":"BUTTER","from":"N","to":"A","at":"2026-11-04T05:41:40.858Z"},
     {"p":"HOTEL","from":"A","to":"N","at":"2026-11-03T22:17:06.388Z"},
